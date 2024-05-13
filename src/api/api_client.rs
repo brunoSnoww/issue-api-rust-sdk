@@ -37,7 +37,7 @@ impl Api {
     pub async fn get(&self, endpoint: &str) -> Result<String, Error> {
         let builder = self.request_builder(reqwest::Method::GET, endpoint).await;
         let response = builder.send().await?;
-        response.text().await.map_err(Error::from)
+        response.json().await.map_err(Error::from)
     }
 
     pub async fn post(&self, endpoint: &str, body: &str) -> Result<String, Error> {

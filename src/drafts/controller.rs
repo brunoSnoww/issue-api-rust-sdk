@@ -1,10 +1,4 @@
-use reqwest::Error;
-use serde_json::json;
-
-use crate::api::{
-    self,
-    api_client::{self, Api},
-};
+use crate::api::{api_client::Api, errors::Error};
 
 use super::models::{CreateNewDraftRequest, CreateNewDraftResponse};
 
@@ -20,10 +14,9 @@ impl Draft {
             api_client,
         }
     }
-    pub async fn create_new_draft(
-        base_route: &str,
-        draft: CreateNewDraftRequest,
-    ) -> Result<CreateNewDraftResponse, Error> {
-        todo!()
+    pub async fn create_new_draft(self, draft: &CreateNewDraftRequest) -> Result<(), Error> {
+        let body = serde_json::to_string(draft)?;
+        self.api_client.post(self.base_route, &body).await?;
+        Ok(())
     }
 }
