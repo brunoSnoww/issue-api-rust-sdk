@@ -1,4 +1,4 @@
-# issue-api-rust-sdk
+# issuu-api-rust-sdk
 
 ```rust
 use issuu_api_sdk::{
