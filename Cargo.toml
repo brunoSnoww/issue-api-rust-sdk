@@ -1,0 +1,8 @@
+[package]
+name = "issuu-api-sdk"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+reqwest = "*"
+dotenv = "*"
