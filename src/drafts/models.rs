@@ -1,12 +1,14 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "UPPERCASE")]
 pub enum DraftAccess {
     Public,
     Private,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
 pub enum DraftType {
     Editorial,
     Book,
@@ -101,9 +103,26 @@ pub struct CreateNewDraftResponse {
     pub slug: String,
     pub owner: String,
     pub cover: Cover,
-    pub file_info: FileInfo,
-    pub state: String, // Using String to simplify; ideally, this should be an enum if only limited values are allowed.
+    pub file_info: Option<FileInfo>,
+    pub state: Option<String>, // Using String to simplify; ideally, this should be an enum if only limited values are allowed.
     pub location: String,
     pub changes: Option<Changes>,
     pub created: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(rename_all = "UPPERCASE")]
+pub enum DraftState {
+    Draft,
+    Published,
+    Scheduled,
+    Unpublished,
+    Quarantined,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct GetDraftBySlugResponse {
+    #[serde(flatten)]
+    pub base: CreateNewDraftResponse,
+    pub state: DraftState,
 }

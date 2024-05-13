@@ -23,6 +23,7 @@ async fn main() {
         },
     };
 
-    let api = Api::new("https://api.issuu.com/v2/");
+    let api = Api::new("https://api.issuu.com/v2");
     let draft = Draft::new(api);
+    draft.create_new_draft(&draft_request).await.unwrap();
 }

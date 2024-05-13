@@ -1,4 +1,5 @@
 use reqwest::{Client, Error, RequestBuilder};
+use serde::de::DeserializeOwned;
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
@@ -30,14 +31,13 @@ impl Api {
         if let Some(ref t) = *token {
             req_builder = req_builder.bearer_auth(t);
         }
-
         req_builder
     }
 
-    pub async fn get(&self, endpoint: &str) -> Result<String, Error> {
+    pub async fn get<T: DeserializeOwned>(&self, endpoint: &str) -> Result<T, Error> {
         let builder = self.request_builder(reqwest::Method::GET, endpoint).await;
-        let response = builder.send().await?;
-        response.json().await.map_err(Error::from)
+        let response = builder.header("Accept", "application/json").send().await?;
+        response.json::<T>().await.map_err(Error::from)
     }
 
     pub async fn post(&self, endpoint: &str, body: &str) -> Result<String, Error> {
