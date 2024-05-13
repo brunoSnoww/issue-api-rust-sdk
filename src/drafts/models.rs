@@ -104,7 +104,6 @@ pub struct CreateNewDraftResponse {
     pub owner: String,
     pub cover: Cover,
     pub file_info: Option<FileInfo>,
-    pub state: Option<String>, // Using String to simplify; ideally, this should be an enum if only limited values are allowed.
     pub location: String,
     pub changes: Option<Changes>,
     pub created: Option<String>,
