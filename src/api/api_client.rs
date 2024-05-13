@@ -1,41 +1,50 @@
-use dotenv::dotenv;
-use reqwest::{header, Client, Error, StatusCode};
+use reqwest::{Client, Error, RequestBuilder};
+use std::sync::Arc;
+use tokio::sync::Mutex;
 
-struct Api {
+pub struct Api {
     client: Client,
     base_url: String,
-    token: Option<String>,
+    token: Arc<Mutex<Option<String>>>,
 }
 
 impl Api {
-    pub fn new(base_url: String) -> Self {
+    pub fn new(base_url: &str) -> Self {
         Api {
             client: Client::new(),
-            base_url,
-            token: None,
+            base_url: base_url.to_string(),
+            token: Arc::new(Mutex::new(None)),
         }
     }
 
-    pub fn set_token(&mut self, new_token: String) {
-        self.token = Some(new_token);
+    pub async fn set_token(&self, new_token: &str) {
+        let mut token = self.token.lock().await;
+        *token = Some(new_token.to_string());
     }
 
-    async fn make_request(&self, endpoint: &str) -> Result<String, Error> {
+    async fn request_builder(&self, method: reqwest::Method, endpoint: &str) -> RequestBuilder {
         let url = format!("{}{}", self.base_url, endpoint);
+        let token = self.token.lock().await;
+        let mut req_builder = self.client.request(method, &url);
 
-        let mut request_builder = self.client.get(&url);
-
-        if let Some(ref token) = self.token {
-            request_builder =
-                request_builder.header(header::AUTHORIZATION, format!("Bearer {}", token));
+        if let Some(ref t) = *token {
+            req_builder = req_builder.bearer_auth(t);
         }
 
-        let response = request_builder.send().await?;
-
-        if response.status().is_success() {
-            Ok(response.text().await?)
-        } else {
-            todo!()
-        }
+        req_builder
     }
+
+    pub async fn get(&self, endpoint: &str) -> Result<String, Error> {
+        let builder = self.request_builder(reqwest::Method::GET, endpoint).await;
+        let response = builder.send().await?;
+        response.text().await.map_err(Error::from)
+    }
+
+    pub async fn post(&self, endpoint: &str, body: &str) -> Result<String, Error> {
+        let builder = self.request_builder(reqwest::Method::POST, endpoint).await;
+        let response = builder.body(body.to_string()).send().await?;
+        response.text().await.map_err(Error::from)
+    }
+
+    // Additional methods (put, delete, etc.) can be defined in a similar way.
 }

@@ -6,3 +6,7 @@ edition = "2021"
 [dependencies]
 reqwest = "*"
 dotenv = "*"
+tokio = { version = "1", features = ["full"] }
+serde = { version = "*", features = ["derive"] }
+serde_json = "*"
+wasm-bindgen = { version = "0.2.51", features = ["serde-serialize"] }
