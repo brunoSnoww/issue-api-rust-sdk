@@ -24,6 +24,10 @@ async fn main() {
     };
 
     let api = Api::new("https://api.issuu.com/v2");
+    /* set token
+        let token = "";
+        api.set_token(&format!("{token}")).await;
+    */
     let draft = Draft::new(api);
     draft.create_new_draft(&draft_request).await.unwrap();
 }
