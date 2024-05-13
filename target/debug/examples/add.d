@@ -1,1 +1,0 @@
-/Users/brunoneves/Desktop/personalProjects/OPEN\ SOURCE/issue-api-rust-sdk/target/debug/examples/add: /Users/brunoneves/Desktop/personalProjects/OPEN\ SOURCE/issue-api-rust-sdk/examples/add.rs /Users/brunoneves/Desktop/personalProjects/OPEN\ SOURCE/issue-api-rust-sdk/src/lib.rs
